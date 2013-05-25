@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.ai_projekt"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.autofocus"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front.autofocus"
+        android:required="false" />
+
+    <uses-sdk
+        android:minSdkVersion="11"
+        android:targetSdkVersion="17" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.ai_projekt.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.ai_projekt.DisplayMessageActivity"
+            android:label="@string/title_activity_display_message"
+            android:parentActivityName="com.example.ai_projekt.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ai_projekt.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.ai_projekt.CameraView"
+            android:label="@string/title_activity_camera_view"
+            android:parentActivityName="com.example.ai_projekt.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ai_projekt.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.ai_projekt.SmalCameraView"
+            android:label="@string/title_activity_smal_camera_view"
+            android:parentActivityName="com.example.ai_projekt.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ai_projekt.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.ai_projekt.OpenCVExample"
+            android:label="@string/title_activity_open_cvexample"
+            android:parentActivityName="com.example.ai_projekt.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ai_projekt.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.example.ai_projekt.OpenCVImage"
+            android:label="@string/title_activity_open_cvimage"
+            android:parentActivityName="com.example.ai_projekt.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.ai_projekt.MainActivity" />
+        </activity>
+    </application>
+
+</manifest>
