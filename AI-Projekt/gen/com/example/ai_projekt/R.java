@@ -62,13 +62,22 @@ containing a value of this type.
     }
     public static final class id {
         public static final int HelloOpenCvView=0x7f040004;
-        public static final int action_settings=0x7f040007;
+        public static final int action_settings=0x7f040010;
         public static final int any=0x7f040000;
         public static final int back=0x7f040001;
         public static final int front=0x7f040002;
-        public static final int gray_image=0x7f040005;
+        public static final int gray_image=0x7f04000e;
         public static final int picture=0x7f040003;
-        public static final int smal_picture=0x7f040006;
+        public static final int seekBar1=0x7f040005;
+        public static final int seekBar2=0x7f040008;
+        public static final int seekBar3=0x7f04000b;
+        public static final int smal_picture=0x7f04000f;
+        public static final int textView1=0x7f040006;
+        public static final int textView2=0x7f040009;
+        public static final int textView3=0x7f04000c;
+        public static final int textView4=0x7f040007;
+        public static final int textView5=0x7f04000a;
+        public static final int textView6=0x7f04000d;
     }
     public static final class layout {
         public static final int activity_camera_view=0x7f030000;

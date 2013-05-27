@@ -15,14 +15,19 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.TextView;
 
-public class OpenCVExample extends Activity implements CvCameraViewListener2 {
+
+public class OpenCVExample extends Activity implements CvCameraViewListener2, OnSeekBarChangeListener {
 	private final static String TAG = "OpenCVLoader/BaseLoaderCallback";
 	private CameraBridgeViewBase mOpenCvCameraView;
 
@@ -37,7 +42,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2 {
 	private Mat mRgba;
 	private Mat mIntermediateMat;
 	private Mat mGray;
-
+	private int threshold=1, minLineSize=1, lineGap=1;
 	android.hardware.Camera camera;
 
 	private MenuItem mItemPreviewRGBA;
@@ -46,6 +51,15 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2 {
 	private MenuItem mItemPreviewCanny;
 	private MenuItem mItemPreviewCircle;
 	private MenuItem mItemPreviewOctagon;
+	
+	private SeekBar bar; // declare seekbar object variable
+	private SeekBar bar2; // declare seekbar object variable
+	private SeekBar bar3; // declare seekbar object variable
+	
+	private TextView textProgress1,textAction1;
+	private TextView textProgress2,textAction2;
+	private TextView textProgress3,textAction3;
+	
 
 
 	@Override
@@ -54,9 +68,39 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2 {
 		super.onCreate(savedInstanceState);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.activity_open_cvexample);
+//		camera = Camera.open();
+//		Camera.Parameters camera_param = camera.getParameters();
+//		camera_param.setRotation(90);
+//		camera.setParameters(camera_param);
 		mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.HelloOpenCvView);
+		mOpenCvCameraView.setRotation(0);
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 		mOpenCvCameraView.setCvCameraViewListener(this);
+		
+		bar = (SeekBar)findViewById(R.id.seekBar1); // make seekbar object
+        bar.setOnSeekBarChangeListener(this); // set seekbar listener.
+        
+        bar2 = (SeekBar)findViewById(R.id.seekBar2); // make seekbar object
+        bar2.setOnSeekBarChangeListener(this); // set seekbar listener.
+        
+        bar3 = (SeekBar)findViewById(R.id.seekBar3); // make seekbar object
+        bar3.setOnSeekBarChangeListener(this); // set seekbar listener.
+        
+     // make text label for progress value
+        textProgress1 = (TextView)findViewById(R.id.textView1);
+     // make text label for action
+        textAction1 = (TextView)findViewById(R.id.textView4);
+        
+     // make text label for progress value
+        textProgress2 = (TextView)findViewById(R.id.textView2);
+     // make text label for action
+        textAction2 = (TextView)findViewById(R.id.textView5);
+        
+     // make text label for progress value
+        textProgress3 = (TextView)findViewById(R.id.textView3);
+     // make text label for action
+        textAction3 = (TextView)findViewById(R.id.textView6);
+        
 	}
 
 	@Override
@@ -203,13 +247,13 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2 {
 		Imgproc.Canny(inputFrame.gray(), mIntermediateMat, 80, 100);
 		Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_GRAY2RGBA,
 		4);
-		Imgproc.HoughLinesP(mIntermediateMat, octagonImage, 1, Math.PI/180, 50, 20, 20);
+		Imgproc.HoughLinesP(mIntermediateMat, octagonImage, 1, Math.PI/180, threshold,minLineSize,lineGap);
 
 
 
 		//Imgproc.HoughLinesP(thresholdImage, lines, 1, Math.PI/180, threshold, minLineSize, lineGap);
 
-		for (int x = 0; x < octagonImage.cols() && x < 1; x++)
+		for (int x = 0; x < octagonImage.cols(); x++)
 		{
 		double[] vec = octagonImage.get(0, x);
 		double x1 = vec[0],
@@ -224,38 +268,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2 {
 		}
 
 
-		// // input frame has gray scale format
-		// mRgba = inputFrame.rgba();
-		// mGray = inputFrame.gray();
-		//
-		// //Mat octagonImage = new Mat(mGray.rows(), mGray.cols(),
-		// // CvType.CV_8UC1);
-		//
-		// Imgproc.Canny(mGray, mIntermediateMat, 80, 100);
-		// Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_GRAY2RGBA,4);
-		// Imgproc.HoughLines(mIntermediateMat, mRgba, 1, Math.PI/180, 100);
-		//
-		// if (octagonImage.cols() > 0) {
-		// Log.i(TEXT_SERVICES_MANAGER_SERVICE, "Kreis gr��er als 0 --> "
-		// + octagonImage.cols());
-		// for (int x = 0; x < octagonImage.cols(); x++) {
-		//
-		// double vCircle[] = octagonImage.get(0, x);
-		//
-		// if (vCircle == null) {
-		// Log.i(TEXT_SERVICES_MANAGER_SERVICE,
-		// "vCircle ist leer --> " + octagonImage.get(0, x));
-		// break;
-		// }
-		//
-		// Core.line(img, pt1, pt2, color)
-		// new Scalar(255, 255, 0, 255), 10);
-		// Core.circle(mRgba, pt, 3, new Scalar(255, 255, 0, 255), 10);
-		//
-		// }
-		// }
-		// Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_GRAY2RGBA,
-		// 4);
+		
 		break;
 		}
 	
@@ -283,4 +296,45 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2 {
 	}
 
 	public native void FindFeatures(long matAddrGr, long matAddrRgba);
+
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress,
+			boolean fromUser) {
+		// TODO Auto-generated method stub
+		if (seekBar.getId()==bar.getId()){
+		textProgress1.setText("The value is: "+progress);
+		if (progress!=0)
+		threshold=progress;
+		}
+		if (seekBar.getId()==bar2.getId()){
+		textProgress2.setText("The value is: "+progress);
+		if (progress!=0)
+		minLineSize=progress;
+		}
+		
+		if (seekBar.getId()==bar3.getId()){
+		textProgress3.setText("The value is: "+progress);
+		if (progress!=0)
+		lineGap=progress;
+		}
+		
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		// TODO Auto-generated method stub
+		textAction1.setText("starting to track touch");
+		textAction2.setText("starting to track touch");
+		textAction3.setText("starting to track touch");
+		
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		// TODO Auto-generated method stub
+		seekBar.setSecondaryProgress(seekBar.getProgress()); // set the shade of the previous value.
+		textAction1.setText("ended tracking touch");
+	}
+
+	
 }
