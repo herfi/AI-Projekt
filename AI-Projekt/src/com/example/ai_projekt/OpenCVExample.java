@@ -1,5 +1,8 @@
 package com.example.ai_projekt;
 
+import java.util.List;
+import java.util.Vector;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -249,7 +252,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2, On
 		Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_GRAY2RGBA,
 		4);
 		Imgproc.HoughLinesP(mIntermediateMat, octagonImage, 1, Math.PI/180, threshold,minLineSize,lineGap);
-
+		
 		double[][] vec2= new double[octagonImage.cols()][5];
 
 
@@ -266,32 +269,50 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2, On
 		double m = (y2)-(y1)/(x2)-(x1);
 		double b = y1-(m)*x1;
 		//double m2 =1;
-		vec2[x][0] = x1;
-		vec2[x][1] = y1;
-		vec2[x][2] = x2;
-		vec2[x][3] = y2;
-		vec2[x][4] = m;
-		
-		}
 		
 		for (int m1 = 0; m1 < vec2.length; m1++)
 		{
-			for (int m2 = 1; m2 < vec2.length; m2++)
-			{
-				int alpha = (int) Math.toDegrees(Math.atan(vec2[m1][4]-vec2[m2][4]/1+vec2[m1][4]*vec2[m2][4]));
-				
-				if (!(alpha > 230) &&  !(alpha < 220)){
-				Point start = new Point(vec2[m1][0], vec2[m1][1]);
-				Point end = new Point(vec2[m1][2], vec2[m1][3]);
+			if (x2==0) break;
+			int alpha = (int) Math.toDegrees(Math.atan(m-vec2[m1][4]/1+m*vec2[m1][4]));
+			if (!(alpha >= 91) &&  !(alpha <= 89)){
+			
+				vec2[x][0] = x1;
+				vec2[x][1] = y1;
+				vec2[x][2] = x2;
+				vec2[x][3] = y2;
+				vec2[x][4] = m;
+				Point start = new Point(x1, y1);
+				Point end = new Point(x2, y2);
 				Core.line(mRgba, start, end, new Scalar(255,0,0), 3);
-		
-				Point start2 = new Point(vec2[m2][0], vec2[m2][1]);
-				Point end2 = new Point(vec2[m2][2], vec2[m2][3]);
-				Core.line(mRgba, start2, end2, new Scalar(255,0,0), 3);
-				}
-				
 			}
 		}
+		
+//		vec2[x][0] = x1;
+//		vec2[x][1] = y1;
+//		vec2[x][2] = x2;
+//		vec2[x][3] = y2;
+//		vec2[x][4] = m;
+	
+		}
+		
+//		for (int m1 = 0; m1 < vec2.length; m1++)
+//		{
+//			for (int m2 = 1; m2 < vec2.length; m2++)
+//			{
+//				int alpha = (int) Math.toDegrees(Math.atan(vec2[m1][4]-vec2[m2][4]/1+vec2[m1][4]*vec2[m2][4]));
+//				
+//				if (!(alpha > 230) &&  !(alpha < 220)){
+//				Point start = new Point(vec2[m1][0], vec2[m1][1]);
+//				Point end = new Point(vec2[m1][2], vec2[m1][3]);
+//				Core.line(mRgba, start, end, new Scalar(255,0,0), 3);
+//		
+//				Point start2 = new Point(vec2[m2][0], vec2[m2][1]);
+//				Point end2 = new Point(vec2[m2][2], vec2[m2][3]);
+//				Core.line(mRgba, start2, end2, new Scalar(255,0,0), 3);
+//				}
+//				
+//			}
+//		}
 
 
 		
