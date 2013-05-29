@@ -32,23 +32,12 @@ public class MainActivity extends Activity {
     }
    */
     
-    public void takePicture(View view){
-    	Intent intent = new Intent(this, CameraView.class);
-    	startActivity(intent);
-    }
     
-    public void takeSmallPicture(View view){
-    	Intent intent = new Intent(this, SmalCameraView.class);
-    	startActivity(intent);
-    }
     
     public void takeOpenCVPicture(View view){
     	Intent intent = new Intent(this, OpenCVExample.class);
     	startActivity(intent);
     }
     
-    public void OpenCVImage(View view){
-    	Intent intent = new Intent(this, OpenCVImage.class);
-    	startActivity(intent);
-    }
+    
 }

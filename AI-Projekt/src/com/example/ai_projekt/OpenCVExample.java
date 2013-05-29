@@ -351,6 +351,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2, On
 		if (seekBar.getId()==bar.getId()){
 		textProgress1.setText("The value is: "+progress);
 		if (progress!=0)
+			
 		threshold=progress;
 		}
 		if (seekBar.getId()==bar2.getId()){

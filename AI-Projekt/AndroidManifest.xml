@@ -39,30 +39,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.example.ai_projekt.DisplayMessageActivity"
-            android:label="@string/title_activity_display_message"
-            android:parentActivityName="com.example.ai_projekt.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ai_projekt.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.example.ai_projekt.CameraView"
-            android:label="@string/title_activity_camera_view"
-            android:parentActivityName="com.example.ai_projekt.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ai_projekt.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.example.ai_projekt.SmalCameraView"
-            android:label="@string/title_activity_smal_camera_view"
-            android:parentActivityName="com.example.ai_projekt.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ai_projekt.MainActivity" />
-        </activity>
+        
         <activity
             android:name="com.example.ai_projekt.OpenCVExample"
             android:label="@string/title_activity_open_cvexample"
@@ -71,14 +48,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ai_projekt.MainActivity" />
         </activity>
-        <activity
-            android:name="com.example.ai_projekt.OpenCVImage"
-            android:label="@string/title_activity_open_cvimage"
-            android:parentActivityName="com.example.ai_projekt.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.ai_projekt.MainActivity" />
-        </activity>
+        
     </application>
 
 </manifest>
