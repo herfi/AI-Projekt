@@ -25,6 +25,12 @@
         android:minSdkVersion="11"
         android:targetSdkVersion="17" />
 
+     <supports-screens android:resizeable="true"
+                      android:smallScreens="true"
+                      android:normalScreens="true"
+                      android:largeScreens="true"
+                      android:anyDensity="true" />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -43,6 +49,9 @@
         <activity
             android:name="com.example.ai_projekt.OpenCVExample"
             android:label="@string/title_activity_open_cvexample"
+            android:theme="@android:style/Theme.NoTitleBar"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation"
             android:parentActivityName="com.example.ai_projekt.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
