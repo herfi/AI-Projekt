@@ -89,7 +89,8 @@ containing a value of this type.
         public static final int main=0x7f090002;
         public static final int open_cvexample=0x7f090003;
         public static final int open_cvimage=0x7f090004;
-        public static final int smal_camera_view=0x7f090005;
+        public static final int slider=0x7f090005;
+        public static final int smal_camera_view=0x7f090006;
     }
     public static final class string {
         public static final int action_settings=0x7f070003;

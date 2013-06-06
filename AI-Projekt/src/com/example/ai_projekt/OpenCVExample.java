@@ -6,12 +6,7 @@ import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
-import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
@@ -31,23 +26,23 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	private CameraBridgeViewBase mOpenCvCameraView;
 
 	private static final int VIEW_MODE_RGBA = 0;
-	private static final int VIEW_MODE_HSV = 3;
+	private static final int VIEW_MODE_SQUARE = 3;
 	private static final int VIEW_MODE_CIRCLE = 5;
 	private static final int VIEW_MODE_OCTAGON = 6;
+	private static final int VIEW_MODE_SHAPE = 7;
+	
+	
 
 	private int mViewMode;
 	private Mat mRgba;
-	private Mat mIntermediateMat;
-	private Mat mGray;
-	private int threshold = 1, minLineSize = 1, lineGap = 1;
-	private int h_min = 0, h_max = 0, s_min = 0, s_max = 0, v_min = 0, v_max = 0;
-
+	
 	android.hardware.Camera camera;
 
 	private MenuItem mItemPreviewRGBA;
-	private MenuItem mItemPreviewHSV;
+	private MenuItem mItemPreviewSQUARE;
 	private MenuItem mItemPreviewCircle;
 	private MenuItem mItemPreviewOctagon;
+	private MenuItem mItemPreviewShape;
 
 	private SeekBar bar; // declare seekbar object variable
 	private SeekBar bar2; // declare seekbar object variable
@@ -55,7 +50,8 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	private SeekBar bar4; // declare seekbar object variable
 	private SeekBar bar5; // declare seekbar object variable
 	private SeekBar bar6; // declare seekbar object variable
-
+	
+	
 	private TextView textProgress1;
 	private TextView textProgress2;
 	private TextView textProgress3;
@@ -79,27 +75,27 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		mOpenCvCameraView.setCvCameraViewListener(this);
 		
 		bar = (SeekBar) findViewById(R.id.seekBar1); // make seekbar object
-		bar.setMax(255);
+		bar.setMax(300);
 		bar.setOnSeekBarChangeListener(this); // set seekbar listener.
 
 		bar2 = (SeekBar) findViewById(R.id.seekBar2); // make seekbar object
-		bar2.setMax(255);
+		bar2.setMax(300);
 		bar2.setOnSeekBarChangeListener(this); // set seekbar listener.
 
 		bar3 = (SeekBar) findViewById(R.id.seekBar3); // make seekbar object
-		bar3.setMax(255);
+		bar3.setMax(300);
 		bar3.setOnSeekBarChangeListener(this); // set seekbar listener.
 
 		bar4 = (SeekBar) findViewById(R.id.seekBar4); // make seekbar object
-		bar4.setMax(255);
+		bar4.setMax(300);
 		bar4.setOnSeekBarChangeListener(this); // set seekbar listener.
 
 		bar5 = (SeekBar) findViewById(R.id.seekBar5); // make seekbar object
-		bar5.setMax(255);
+		bar5.setMax(300);
 		bar5.setOnSeekBarChangeListener(this); // set seekbar listener.
 
 		bar6 = (SeekBar) findViewById(R.id.seekBar6); // make seekbar object
-		bar6.setMax(255);
+		bar6.setMax(300);
 		bar6.setOnSeekBarChangeListener(this); // set seekbar listener.
 
 		
@@ -127,9 +123,10 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	public boolean onCreateOptionsMenu(Menu menu) {
 		Log.i(TAG, "called onCreateOptionsMenu");
 		mItemPreviewRGBA = menu.add("Preview RGBA");
-		mItemPreviewHSV = menu.add("HSV");
+		mItemPreviewSQUARE = menu.add("Find Square");
 		mItemPreviewCircle = menu.add("Find Circle");
 		mItemPreviewOctagon = menu.add("Find Octagon");
+		mItemPreviewShape = menu.add("Find Shaps");
 
 		return true;
 	}
@@ -172,16 +169,17 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	}
 
 	public void onCameraViewStarted(int width, int height) {
-		mRgba = new Mat(height, width, CvType.CV_8UC4);
-		mIntermediateMat = new Mat(height, width, CvType.CV_8UC4);
-		mGray = new Mat(height, width, CvType.CV_8UC1);
-
+//		mRgba = new Mat(height, width, CvType.CV_8UC4);
+//		mIntermediateMat = new Mat(height, width, CvType.CV_8UC4);
+//		mGray = new Mat(height, width, CvType.CV_8UC1);
+		Detection.matIni(width, height);
 	}
 
 	public void onCameraViewStopped() {
-		mRgba.release();
-		mGray.release();
-		mIntermediateMat.release();
+//		mRgba.release();
+//		mGray.release();
+//		mIntermediateMat.release();
+		Detection.matRelease();
 	}
 
 	public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
@@ -193,90 +191,27 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			mRgba = inputFrame.rgba();
 			break;
 
-		case VIEW_MODE_HSV:
-			Imgproc.cvtColor(inputFrame.rgba(), mRgba, Imgproc.COLOR_RGB2HSV, 4);
+		case VIEW_MODE_SQUARE:
+			//Imgproc.cvtColor(inputFrame.rgba(), mRgba, Imgproc.COLOR_RGB2HSV, 4);
+			mRgba = Detection.squareHsvDetection(inputFrame);
 			break;
 
 		case VIEW_MODE_CIRCLE:
-			mRgba = inputFrame.rgba();
-			Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
-			Core.inRange(mIntermediateMat, new Scalar(h_min, s_min, v_min),
-					new Scalar(h_max, s_max, v_max), mRgba);
-
-			circleDetection(mRgba);
+			mRgba = Detection.circleHsvDetection(inputFrame);
+			
 			break;
-
+			
 		case VIEW_MODE_OCTAGON:
 
-			mRgba = inputFrame.rgba();
+			mRgba = Detection.octagonDetection(inputFrame);
+			
 
-			Mat octagonImage = new Mat(mGray.rows(), mGray.cols(),
-					CvType.CV_8UC1);
+			break;
+			
+		case VIEW_MODE_SHAPE:
 
-			Imgproc.Canny(inputFrame.gray(), mIntermediateMat, 80, 100);
-			Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_GRAY2RGBA,
-					4);
-			Imgproc.HoughLinesP(mIntermediateMat, octagonImage, 1,
-					Math.PI / 180, threshold, minLineSize, lineGap);
-
-			double[][] vec2 = new double[octagonImage.cols()][5];
-
-			// Imgproc.HoughLinesP(thresholdImage, lines, 1, Math.PI/180,
-			// threshold, minLineSize, lineGap);
-
-			for (int x = 0; x < octagonImage.cols(); x++) {
-				double[] vec = octagonImage.get(0, x);
-				double x1 = vec[0], y1 = vec[1], x2 = vec[2], y2 = vec[3];
-
-				double m = (y2) - (y1) / (x2) - (x1);
-				double b = y1 - (m) * x1;
-				// double m2 =1;
-
-				for (int m1 = 0; m1 < vec2.length; m1++) {
-					if (x2 == 0)
-						break;
-					int alpha = (int) Math.toDegrees(Math.atan(m - vec2[m1][4]
-							/ 1 + m * vec2[m1][4]));
-					if (!(alpha >= 91) && !(alpha <= 89)) {
-
-						vec2[x][0] = x1;
-						vec2[x][1] = y1;
-						vec2[x][2] = x2;
-						vec2[x][3] = y2;
-						vec2[x][4] = m;
-						Point start = new Point(x1, y1);
-						Point end = new Point(x2, y2);
-						Core.line(mRgba, start, end, new Scalar(255, 0, 0), 3);
-					}
-				}
-
-				// vec2[x][0] = x1;
-				// vec2[x][1] = y1;
-				// vec2[x][2] = x2;
-				// vec2[x][3] = y2;
-				// vec2[x][4] = m;
-
-			}
-
-			// for (int m1 = 0; m1 < vec2.length; m1++)
-			// {
-			// for (int m2 = 1; m2 < vec2.length; m2++)
-			// {
-			// int alpha = (int)
-			// Math.toDegrees(Math.atan(vec2[m1][4]-vec2[m2][4]/1+vec2[m1][4]*vec2[m2][4]));
-			//
-			// if (!(alpha > 230) && !(alpha < 220)){
-			// Point start = new Point(vec2[m1][0], vec2[m1][1]);
-			// Point end = new Point(vec2[m1][2], vec2[m1][3]);
-			// Core.line(mRgba, start, end, new Scalar(255,0,0), 3);
-			//
-			// Point start2 = new Point(vec2[m2][0], vec2[m2][1]);
-			// Point end2 = new Point(vec2[m2][2], vec2[m2][3]);
-			// Core.line(mRgba, start2, end2, new Scalar(255,0,0), 3);
-			// }
-			//
-			// }
-			// }
+			mRgba = Detection.shapeDetection(inputFrame);
+			
 
 			break;
 		}
@@ -284,52 +219,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		return mRgba;
 	}
 
-	public void circleDetection(Mat grau) {
-
-		// Weichzeichner (GaussianBlur)
-		Imgproc.GaussianBlur(grau, grau, new Size(9, 9), 2, 2);
-
-		// Erzeugen einer Mat mit der Größe von mGray und einem Kanal.
-		Mat circleImage = new Mat(grau.rows(), grau.cols(), CvType.CV_8UC1);
-
-		// Kreise erkennen (HoughCircle)
-		Imgproc.HoughCircles(grau, circleImage, Imgproc.CV_HOUGH_GRADIENT, 2,
-				grau.rows() / 4, 200, 100, 0, 0);
-
-		Log.i(TEXT_SERVICES_MANAGER_SERVICE, "minDistants --> " + grau.rows()
-				/ 4);
-
-		Log.i(TEXT_SERVICES_MANAGER_SERVICE, "Kreise erkannt");
-		// Wenn Kreise gefunden wurden enthält circleImage Werte
-		if (circleImage.cols() > 0) {
-			Log.i(TEXT_SERVICES_MANAGER_SERVICE, "Kreis größer als 0 --> "
-					+ circleImage.cols());
-
-			// Schleife wird mit jedem Wert von circleImage (Vectoren)
-			// durchgegangen.
-			for (int x = 0; x < circleImage.cols(); x++) {
-
-				double vCircle[] = circleImage.get(0, x);
-
-				if (vCircle == null) {
-					Log.i(TEXT_SERVICES_MANAGER_SERVICE,
-							"vCircle ist leer --> " + circleImage.get(0, x));
-					break;
-				}
-
-				// Bestimmung des Mittelpunktes vom Kreis
-				Point pt = new Point(Math.round(vCircle[0]),
-						Math.round(vCircle[1]));
-				// Bestimmung des Radius vom Kreis
-				int radius = (int) Math.round(vCircle[2]);
-
-				// Gefundener Kreis wird gezeichnet
-				Core.circle(mRgba, pt, radius, new Scalar(255, 255, 0, 255), 10);
-				// Mittelpunkt des Kreis wird gezeichnet
-				Core.circle(mRgba, pt, 3, new Scalar(255, 255, 0, 255), 10);
-			}
-		}
-	}
+	
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		Log.i(TAG, "called onOptionsItemSelected; selected item: " + item);
@@ -338,10 +228,12 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			mViewMode = VIEW_MODE_RGBA;
 		} else if (item == mItemPreviewCircle) {
 			mViewMode = VIEW_MODE_CIRCLE;
-		} else if (item == mItemPreviewHSV) {
-			mViewMode = VIEW_MODE_HSV;
+		} else if (item == mItemPreviewSQUARE) {
+			mViewMode = VIEW_MODE_SQUARE;
 		} else if (item == mItemPreviewOctagon) {
 			mViewMode = VIEW_MODE_OCTAGON;
+		} else if (item == mItemPreviewShape) {
+			mViewMode = VIEW_MODE_SHAPE;
 		}
 
 		return true;
@@ -351,67 +243,97 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	public void onProgressChanged(SeekBar seekBar, int progress,
 			boolean fromUser) {
 		// TODO Auto-generated method stub
+	
+		
+		
 		if (seekBar.getId() == bar.getId()) {
 			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
 				textProgress1.setText("The value is: " + progress);
-				threshold = progress;
+				Detection.setThreshold(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress1.setText("The value is: " + (int) (progress));
-				h_min = (int) (progress);
+				Detection.setH_min(progress);
+			}
+			else if (progress != 0 && mViewMode == VIEW_MODE_SHAPE) {
+				textProgress1.setText("The value is: " + progress);
+				//Detection.setMaxCorners(progress);
+				Detection.setH_min(progress);
 			}
 		}
 		if (seekBar.getId() == bar2.getId()) {
 			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
 				textProgress2.setText("The value is: " + progress);
-				minLineSize = progress;
+				Detection.setminLineSize(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress2.setText("The value is: " + (int) (progress));
-				h_max = (int) (progress);
+				Detection.setH_max(progress);
+			}
+			else if (progress != 0 && mViewMode == VIEW_MODE_SHAPE) {
+				textProgress2.setText("The value is: " + progress);
+				//Detection.setQualityLevel(progress);
+				Detection.setH_max(progress);
 			}
 		}
 
 		if (seekBar.getId() == bar3.getId()) {
 			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
 				textProgress3.setText("The value is: " + progress);
-				lineGap = progress;
+				Detection.setlineGap(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress3.setText("The value is: " + (int) (progress));
-				s_min = (int) (progress);
+				Detection.setS_min(progress);
+			}
+			else if (progress != 0 && mViewMode == VIEW_MODE_SHAPE) {
+				textProgress3.setText("The value is: " + progress);
+				//Detection.setMinDistance(progress);
+				Detection.setS_min(progress);
 			}
 		}
 
 		if (seekBar.getId() == bar4.getId()) {
 			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
 				textProgress4.setText("The value is: " + progress);
-				threshold = progress;
+				//Detection.threshold = progress;
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress4.setText("The value is: " + (int) (progress));
-				s_max = (int) (progress);
+				Detection.setS_max(progress);
+			}
+			else if (progress != 0 && mViewMode == VIEW_MODE_SHAPE) {
+				textProgress4.setText("The value is: " + (int) (progress));
+				Detection.setS_max(progress);
 			}
 		}
 		if (seekBar.getId() == bar5.getId()) {
 			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
 				textProgress5.setText("The value is: " + progress);
-				minLineSize = progress;
+				//Detection.minLineSize = progress;
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress5.setText("The value is: " + (int) (progress));
-				v_min = (int) (progress);
+				Detection.setV_min(progress);
+			}
+			else if (progress != 0 && mViewMode == VIEW_MODE_SHAPE) {
+				textProgress5.setText("The value is: " + (int) (progress));
+				Detection.setV_min(progress);
 			}
 		}
 
 		if (seekBar.getId() == bar6.getId()) {
 			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
 				textProgress6.setText("The value is: " + progress);
-				lineGap = progress;
+				//Detection.lineGap = progress;
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress6.setText("The value is: " + (int) (progress));
-				v_max = (int) (progress);
+				Detection.setV_max(progress);
+			}
+			else if (progress != 0 && mViewMode == VIEW_MODE_SHAPE) {
+				textProgress6.setText("The value is: " + (int) (progress));
+				Detection.setV_max(progress);
 			}
 		}
 
