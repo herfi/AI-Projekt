@@ -344,7 +344,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	    	
 	    	Converters.Mat_to_vector_Point(approx2f, approxList);
 	    	
-	    	//Flächenberechnung der Contour
+	    	//Flï¿½chenberechnung der Contour
 	    	double area = Imgproc.contourArea(contour);
 	        Rect r = Imgproc.boundingRect(contour);
 	        int radius = r.width / 2;
@@ -356,11 +356,11 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	        }
 	        */
 	        
-	        double kreisFläche = (Math.PI * Math.pow(radius, 2));
-	        double achteckFläche = (Math.pow(radius, 2)*(2*(1+Math.sqrt(2))));
+	        double kreisFlaeche = (Math.PI * Math.pow(radius, 2));
+	        double achteckFlaeche = (Math.pow(radius, 2)*(2*(1+Math.sqrt(2))));
 	        
-	        Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreisfläche: " + kreisFläche);
-	        Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteckfläche: " + achteckFläche);
+	        Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "KreisflÃ¤che: " + kreisFlaeche);
+	        Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "AchteckflÃ¤che: " + achteckFlaeche);
 	    	
 	    	if (Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && (int)(approx.total()) > 2 && (int)(approx.total()) < 9)
 	        {
@@ -445,7 +445,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 		// Weichzeichner (GaussianBlur)
 		Imgproc.GaussianBlur(grau, grau, new Size(9, 9), 2, 2);
 
-		// Erzeugen einer Mat mit der Größe von mGray und einem Kanal.
+		// Erzeugen einer Mat mit der Grï¿½ï¿½e von mGray und einem Kanal.
 		Mat circleImage = new Mat(grau.rows(), grau.cols(), CvType.CV_8UC1);
 
 		// Kreise erkennen (HoughCircle)
@@ -456,9 +456,9 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 				/ 4);
 
 		Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreise erkannt");
-		// Wenn Kreise gefunden wurden enthält circleImage Werte
+		// Wenn Kreise gefunden wurden enthï¿½lt circleImage Werte
 		if (circleImage.cols() > 0) {
-			Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreis größer als 0 --> "
+			Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreis grï¿½ï¿½er als 0 --> "
 					+ circleImage.cols());
 
 			// Schleife wird mit jedem Wert von circleImage (Vectoren)
