@@ -13,6 +13,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -46,6 +47,7 @@ public static Mat circleHsvDetection(CvCameraViewFrame inputFrame){
 	
 public static Mat squareHsvDetection(CvCameraViewFrame inputFrame){
 	mRgba = inputFrame.rgba();
+	
 	/*
 	Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
 	Core.inRange(mIntermediateMat, new Scalar(0,120,120), new Scalar(40,255,255), mIntermediateMat);
@@ -342,7 +344,25 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	    	
 	    	Converters.Mat_to_vector_Point(approx2f, approxList);
 	    	
-	    	if (Math.abs((Imgproc.contourArea(contour))) > 100 && Imgproc.isContourConvex(approx) && (int)(approx.total()) > 2 && (int)(approx.total()) < 9)
+	    	//Flächenberechnung der Contour
+	    	double area = Imgproc.contourArea(contour);
+	        Rect r = Imgproc.boundingRect(contour);
+	        int radius = r.width / 2;
+	    	
+	        /*
+	        if(Math.abs(1 - ((double)r.width / r.height)) <= 0.2 &&
+	                Math.abs(1 - (area / (Math.PI * Math.pow(radius, 2)))) <= 0.2){
+	        	
+	        }
+	        */
+	        
+	        double kreisFläche = (Math.PI * Math.pow(radius, 2));
+	        double achteckFläche = (Math.pow(radius, 2)*(2*(1+Math.sqrt(2))));
+	        
+	        Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreisfläche: " + kreisFläche);
+	        Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteckfläche: " + achteckFläche);
+	    	
+	    	if (Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && (int)(approx.total()) > 2 && (int)(approx.total()) < 9)
 	        {
 	    		if ((int)(approx.total()) == 3){
 	    			squares.add(approx);	    	
@@ -377,7 +397,9 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	            //else if (vtc == 6 && minCosine >= -0.55 && maxCosine <= -0.45)
 	            	//squares.add(approx);
 	            
-	            else if (vtc == 8 /*&& minCosine >= -0.95 && maxCosine <= -0.85*/)
+	            else if (vtc == 8 /*&& minCosine >= -0.74 && maxCosine <= -0.63*/)
+	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "minCos: " + minCosine);
+	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "maxCos: " + maxCosine);
 	            	squares.add(approx);
 	        }
 	    	
