@@ -339,7 +339,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	    	
 	    	
 	    	
-	    	Imgproc.approxPolyDP(contour2f, approx2f, Imgproc.arcLength(contour2f, true)*0.02, true);
+	    	Imgproc.approxPolyDP(contour2f, approx2f, /*Imgproc.arcLength(contour2f, true)*0.02*/ 3, true);
 	    	approx.fromArray(approx2f.toArray());
 	    	
 	    	Converters.Mat_to_vector_Point(approx2f, approxList);
@@ -349,22 +349,21 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	        Rect r = Imgproc.boundingRect(contour);
 	        int radius = r.width / 2;
 	    	
-	        /*
-	        if(Math.abs(1 - ((double)r.width / r.height)) <= 0.2 &&
-	                Math.abs(1 - (area / (Math.PI * Math.pow(radius, 2)))) <= 0.2){
-	        	
-	        }
-	        */
+	       
+	       double a = (Math.abs(1 - ((double)r.width / r.height)));
+	       double b = (Math.abs(1 - (area / (Math.PI * Math.pow(radius, 2)))));
+	        
 	        
 	        double kreisFlaeche = (Math.PI * Math.pow(radius, 2));
 	        double achteckFlaeche = (Math.pow(radius, 2)*(2*(1+Math.sqrt(2))));
 	        
-	        Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreisfläche: " + kreisFlaeche);
-	        Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteckfläche: " + achteckFlaeche);
+	        //Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreisfläche: " + kreisFlaeche);
+	        //Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteckfläche: " + achteckFlaeche);
 	    	
 	    	if (Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && (int)(approx.total()) > 2 && (int)(approx.total()) < 9)
 	        {
 	    		if ((int)(approx.total()) == 3){
+	    			Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Dreieck!");
 	    			squares.add(approx);	    	
 	    		}
 	    		else if((int)(approx.total()) >= 4 && (int)(approx.total()) <= 8  )
@@ -386,7 +385,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	            
 	            if(vtc == 4 && minCosine >= -0.1 && maxCosine <= 0.3 )
 	            {
-	                //squares.push_back(approx);
+	            Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Viereck!");
 	            squares.add(approx);
 	            
 	            }
@@ -397,10 +396,14 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	            //else if (vtc == 6 && minCosine >= -0.55 && maxCosine <= -0.45)
 	            	//squares.add(approx);
 	            
-	            else if (vtc == 8 /*&& minCosine >= -0.74 && maxCosine <= -0.63*/)
-	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "minCos: " + minCosine);
-	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "maxCos: " + maxCosine);
+	            else if (vtc == 8){
+	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteck!");
 	            	squares.add(approx);
+	            }
+	        }
+	    	if(Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && a <= 0.2 && b <= 0.2){
+	    		Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreis!");
+	    		squares.add(approx);
 	        }
 	    	
 	    	for (int j = 0; j < squares.size(); j++)

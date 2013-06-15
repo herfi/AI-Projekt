@@ -75,7 +75,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		mOpenCvCameraView.setCvCameraViewListener(this);
 		
 		bar = (SeekBar) findViewById(R.id.seekBar1); // make seekbar object
-		bar.setMax(300);
+		bar.setMax(256);
 		bar.setOnSeekBarChangeListener(this); // set seekbar listener.
 
 		bar2 = (SeekBar) findViewById(R.id.seekBar2); // make seekbar object
