@@ -303,11 +303,11 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
     
     Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
 	Core.inRange(mIntermediateMat, new Scalar(h_min, s_min, v_min),
-			new Scalar(h_max, s_max, v_max), mRgba);
+			new Scalar(h_max, s_max, v_max), mIntermediateMat);
 	//Imgproc.dilate(mRgba, mRgba, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3,3)));
 	//Imgproc.Canny(mRgba, mIntermediateMat, 100, 100);
-	//Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_GRAY2RGBA,
-		//	4);
+	Imgproc.GaussianBlur(mIntermediateMat, mRgba, new Size(5, 5), 0, 0);
+	//Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_HSV2BGR, 4);
 
 	Imgproc.findContours(mRgba, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 	

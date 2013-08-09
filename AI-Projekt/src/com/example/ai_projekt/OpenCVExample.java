@@ -76,27 +76,39 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		
 		bar = (SeekBar) findViewById(R.id.seekBar1); // make seekbar object
 		bar.setMax(256);
+		bar.setProgress(1);
 		bar.setOnSeekBarChangeListener(this); // set seekbar listener.
-
+		Detection.setH_min(1);
+		
 		bar2 = (SeekBar) findViewById(R.id.seekBar2); // make seekbar object
 		bar2.setMax(300);
+		bar2.setProgress(25);
 		bar2.setOnSeekBarChangeListener(this); // set seekbar listener.
+		Detection.setH_max(25);
 
 		bar3 = (SeekBar) findViewById(R.id.seekBar3); // make seekbar object
 		bar3.setMax(300);
+		bar3.setProgress(75);
 		bar3.setOnSeekBarChangeListener(this); // set seekbar listener.
+		Detection.setS_min(75);
 
 		bar4 = (SeekBar) findViewById(R.id.seekBar4); // make seekbar object
 		bar4.setMax(300);
+		bar4.setProgress(251);
 		bar4.setOnSeekBarChangeListener(this); // set seekbar listener.
+		Detection.setS_max(251);
 
 		bar5 = (SeekBar) findViewById(R.id.seekBar5); // make seekbar object
 		bar5.setMax(300);
+		bar5.setProgress(55);
 		bar5.setOnSeekBarChangeListener(this); // set seekbar listener.
+		Detection.setV_min(55);
 
 		bar6 = (SeekBar) findViewById(R.id.seekBar6); // make seekbar object
 		bar6.setMax(300);
+		bar6.setProgress(257);
 		bar6.setOnSeekBarChangeListener(this); // set seekbar listener.
+		Detection.setV_max(257);
 
 		
 		
@@ -332,6 +344,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 				Detection.setV_max(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_SHAPE) {
+				progress=bar6.getProgress();
 				textProgress6.setText("The value is: " + (int) (progress));
 				Detection.setV_max(progress);
 			}
