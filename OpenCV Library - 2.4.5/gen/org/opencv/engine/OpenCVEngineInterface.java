@@ -1,6 +1,6 @@
 /*
  * This file is auto-generated.  DO NOT MODIFY.
- * Original file: /home/herfi/Dropbox/eclipse/workspace/OpenCV Library - 2.4.5/src/org/opencv/engine/OpenCVEngineInterface.aidl
+ * Original file: C:\\Users\\Basti\\git\\AI-Projekt\\OpenCV Library - 2.4.5\\src\\org\\opencv\\engine\\OpenCVEngineInterface.aidl
  */
 package org.opencv.engine;
 /**

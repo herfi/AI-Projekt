@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <TextView
+        android:id="@+id/shape1"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:text="Dreieck"
+        android:textIsSelectable="true" 
+        android:layout_weight="1"/>
+    
+    <TextView
+        android:id="@+id/shape2"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:text="Viereck"
+        android:textIsSelectable="true" 
+        android:layout_weight="1"/>
+    
+    <TextView
+        android:id="@+id/shape3"
+       android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:text="Achteck"
+        android:textIsSelectable="true" 
+        android:layout_weight="1"/>
+    
+    <TextView
+        android:id="@+id/shape4"
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:text="Kreis"
+        android:textIsSelectable="true" 
+        android:layout_weight="1"/>
+
+</LinearLayout>
