@@ -6,8 +6,8 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -25,12 +25,13 @@
         android:minSdkVersion="14"
         android:targetSdkVersion="17" />
 
-     <supports-screens android:resizeable="true"
-                      android:smallScreens="true"
-                      android:normalScreens="true"
-                      android:largeScreens="true"
-                      android:anyDensity="true" />
-    
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -45,18 +46,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
         <activity
             android:name="com.example.ai_projekt.OpenCVExample"
-            android:label="@string/title_activity_open_cvexample"
-            android:theme="@android:style/Theme.NoTitleBar"
-            android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation"
-            android:parentActivityName="com.example.ai_projekt.MainActivity" >
+            android:label="@string/title_activity_open_cvexample"
+            android:parentActivityName="com.example.ai_projekt.MainActivity"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ai_projekt.MainActivity" />
         </activity>
-        
+        <activity
+            android:name="com.example.ai_projekt.ShowShape"
+            android:label="@string/title_activity_show_shape" >
+        </activity>
     </application>
+
 </manifest>

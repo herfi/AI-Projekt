@@ -19,9 +19,12 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.utils.Converters;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
-public class Detection {
+public class Detection extends Activity {
 	
 	private static Mat mRgba;
 	private static Mat mIntermediateMat;
@@ -31,6 +34,7 @@ public class Detection {
 	private static int maxCorners = 4;
 	private static double qualityLevel = 0.001, minDistance = 1.0;
 	
+	private static int frameWert = 1;
 	android.hardware.Camera camera;
 	
 public static Mat circleHsvDetection(CvCameraViewFrame inputFrame){
@@ -41,121 +45,165 @@ public static Mat circleHsvDetection(CvCameraViewFrame inputFrame){
 				new Scalar(h_max, s_max, v_max), mIntermediateMat);
 
 		circleDetection(mIntermediateMat);
-	
+		
 		return mRgba;
 	}
 	
-public static Mat squareHsvDetection(CvCameraViewFrame inputFrame){
-	mRgba = inputFrame.rgba();
-	
-	/*
-	Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
-	Core.inRange(mIntermediateMat, new Scalar(0,120,120), new Scalar(40,255,255), mIntermediateMat);
+public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
 		
-	Mat lines = new Mat(mIntermediateMat.rows(), mIntermediateMat.cols(), CvType.CV_8UC1);
-	
-	//Imgproc.GaussianBlur(inputFrame.gray(), mGray, new Size(9, 9), 2, 2);
-	Imgproc.Canny(mIntermediateMat, mIntermediateMat, 80, 100);
-	
-	
-	Imgproc.HoughLinesP(mIntermediateMat, lines, 1, Math.PI /180, 70, 30, 10);
-	*/
-	
-	Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
-	Core.inRange(mIntermediateMat, new Scalar(0,120,120), new Scalar(40,255,255), mRgba);
-		
-	Mat lines = new Mat(mRgba.rows(), mRgba.cols(), CvType.CV_8UC1);
-	
-	//Imgproc.GaussianBlur(inputFrame.gray(), mGray, new Size(9, 9), 2, 2);
-	//Imgproc.Canny(mRgba, mRgba, 80, 100);
-	
-	
-	Imgproc.HoughLinesP(mRgba, lines, 1, Math.PI /180, 70, 30, 10);
-/*	
-if(lines.cols() > 0){
-	for (int i = 0; i < lines.cols(); i++)
-	{
-	    double[] veclines = lines.get(0, i);
-	    
-	    if (veclines == null)
-            break;
-	    
-	    lines.put(0, i, 0);
-	    lines.put(0, i, (veclines[1] - veclines[3]) / (veclines[0] - veclines[2]) * -veclines[0] + veclines[1]); 
-	    lines.put(0, i, mIntermediateMat.cols()); 
-	    lines.put(0, i, (veclines[1] - veclines[3]) / (veclines[0] - veclines[2]) * (mIntermediateMat.cols() - veclines[2]) + veclines[3]);
-	}
-}
-	*/
-	
-	List<Point> approxList = new LinkedList<Point>();
-	List<Point> squareList = new LinkedList<Point>();
-	if(lines.cols() > 0){
-	for (int i = 0; i < lines.cols(); i++)
-	{
-	    for (int j = i+1; j < lines.cols(); j++)
-	    {
-	    	double[] vecI = lines.get(0, i);
-	    	double[] vecJ = lines.get(0, j);
-	    	
-	    	if(vecI == null || vecJ == null)
-	    		break;
-	    	
-	    	Point pt = computeIntersect(vecI, vecJ);
-	    	
-	    	if(pt.x >= 0 && pt.y >= 0)
-	    	approxList.add(pt);
-	    	
-	    }
-	}
-	}
-	MatOfPoint2f contour2f = new MatOfPoint2f();
-	MatOfPoint2f approx2f = new MatOfPoint2f();	    	
-	if(approxList.size() > 0){
-	for(int i=0; i < approxList.size(); i++ ){
-		contour2f.fromList(approxList);
-	}
-	
-		Imgproc.approxPolyDP(contour2f, approx2f, Imgproc.arcLength(contour2f, true)*0.02, true);
-    	
-		squareList.addAll(approx2f.toList()); 
-	
-	if(squareList.size() == 3){
-		for(int i=1; i < squareList.size(); i++){
-			
-			Point pt1 = squareList.get(i);
-			
-			Point pt2 = squareList.get(i-1);
-			// Mittelpunkt des Kreis wird gezeichnet
-			//Core.circle(mRgba, pt, 3, new Scalar(255, 255, 0, 255), 10);
-				Core.line(mRgba, pt1, pt2, new Scalar(255, 255, 0, 255), 10);
-		
+		switch (frameWert) {
+		case 1:
+			roterFrame();
+			frameWert++;
+			break;
+
+		case 2:
+			gelberFrame();
+			frameWert = 1;
+			break;
 		}
-	}
-	}
-	/*
-if(lines.cols() > 0){
-	for(int i=0; i < lines.cols(); i++){
-		
-		
-		double[] vecLines = lines.get(0, i);
-		if (vecLines == null)
-            break;
 
-		
-		double x1 = vecLines[0], 
-                 y1 = vecLines[1],
-                 x2 = vecLines[2],
-                 y2 = vecLines[3];
-          Point start = new Point(x1, y1);
-          Point end = new Point(x2, y2);
+		mRgba = inputFrame.rgba();
 
-          Core.line(mRgba, start, end, new Scalar(255,0,0), 3);
+		MatOfPoint2f approx2f = new MatOfPoint2f();
+		MatOfPoint approx = new MatOfPoint();
+		MatOfPoint2f contour2f = new MatOfPoint2f();
+		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+		List<MatOfPoint> squares = new ArrayList<MatOfPoint>();
+		List<Point> approxList = new Vector<Point>();
+	    List<Double> cosine = new LinkedList<Double>();
+	    
+	    
+	    Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
+		Core.inRange(mIntermediateMat, new Scalar(h_min, s_min, v_min),
+				new Scalar(h_max, s_max, v_max), mIntermediateMat);
+		//Imgproc.dilate(mRgba, mRgba, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3,3)));
+		//Imgproc.Canny(mRgba, mIntermediateMat, 100, 100);
+		Imgproc.GaussianBlur(mIntermediateMat, mRgba, new Size(5, 5), 0, 0);
+		//Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_HSV2BGR, 4);
+
+		Imgproc.findContours(mRgba, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+		
+		
+		
+		
+		//for (int idx = 0; idx < contours.size(); idx++) {
+			
+			
+			
+			
+		    
+//		    double contourarea = Imgproc.contourArea(contour2f);
+//		    
+//		    if (contourarea > maxArea) {
+//		        maxArea = contourarea;
+//		        maxAreaIdx = idx;
+//		    }
+		    
+		    
+		    
+		    
+		    
+		    for (int i = 0; i < contours.size(); i++)
+		    {
+		    	MatOfPoint contour = contours.get(i);
+				
+				contour2f.fromArray(contour.toArray());
+		    	
+		    	
+		    	
+		    	Imgproc.approxPolyDP(contour2f, approx2f, /*Imgproc.arcLength(contour2f, true)*0.02*/ 3, true);
+		    	approx.fromArray(approx2f.toArray());
+		    	
+		    	Converters.Mat_to_vector_Point(approx2f, approxList);
+		    	
+		    	//Fl�chenberechnung der Contour
+		    	double area = Imgproc.contourArea(contour);
+		        Rect r = Imgproc.boundingRect(contour);
+		        int radius = r.width / 2;
+		    	
+		       
+		       double a = (Math.abs(1 - ((double)r.width / r.height)));
+		       double b = (Math.abs(1 - (area / (Math.PI * Math.pow(radius, 2)))));
+		        
+		        
+		        double kreisFlaeche = (Math.PI * Math.pow(radius, 2));
+		        double achteckFlaeche = (Math.pow(radius, 2)*(2*(1+Math.sqrt(2))));
+		        
+		        //Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreisfläche: " + kreisFlaeche);
+		        //Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteckfläche: " + achteckFlaeche);
+		    	
+		    	if (Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && (int)(approx.total()) > 2 && (int)(approx.total()) < 9)
+		        {
+		    		if ((int)(approx.total()) == 3){
+		    			Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Dreieck!");
+		    			
+		    			squares.add(approx);	    	
+		    		}
+		    		else if((int)(approx.total()) >= 4 && (int)(approx.total()) <= 8  )
+		        	cosine.clear();
+		            double maxCosine = 0;
+		            double minCosine = 0;
+		            int vtc = (int)(approx.total());
+		            
+
+		            for( int j = 2; j < vtc+1; j++ )
+		            {
+		                cosine.add(angle(approxList.get(j%vtc), approxList.get(j-2), approxList.get(j-1)));
+		            }
+		            
+		            Collections.sort(cosine);
+		            maxCosine = cosine.get(vtc-2);
+		            minCosine = cosine.get(0);
+
+		            
+		            if(vtc == 4 && minCosine >= -0.1 && maxCosine <= 0.3 )
+		            {
+		            Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Viereck!");
+		            
+		            squares.add(approx);
+		            
+		            }
+		            //else if (vtc == 5 && minCosine >= -0.34 && maxCosine <= -0.27)
+		            	//squares.add(approx);	     
+		            
+		            
+		            //else if (vtc == 6 && minCosine >= -0.55 && maxCosine <= -0.45)
+		            	//squares.add(approx);
+		            
+		            else if (vtc == 8){
+		            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteck!");
+		            	squares.add(approx);
+		            }
+		        }
+		    	if(Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && a <= 0.2 && b <= 0.2){
+		    		Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreis!");
+		    		
+		    		squares.add(approx);
+		        }
+		    	
+		    	for (int j = 0; j < squares.size(); j++)
+			    {
+
+			    Imgproc.drawContours(mRgba, squares, j, new Scalar(255, 255, 0, 255), 10);
+			    }
+
+		    }
+		    
+
+		    
+		    
+		    
+		    
+		    
+		//}
+		
+
+
+			
+
+		return mRgba;
 	}
-}
-	*/
-	return mRgba;
-}
 
 public static Point computeIntersect(double[] a, double[] b)
 {
@@ -180,74 +228,13 @@ public static Point computeIntersect(double[] a, double[] b)
 	public static Mat octagonDetection(CvCameraViewFrame inputFrame){
 		
 		mRgba = inputFrame.rgba();
-
-		Mat octagonImage = new Mat(mGray.rows(), mGray.cols(),
-				CvType.CV_8UC1);
-
-		Imgproc.Canny(inputFrame.gray(), mIntermediateMat, 80, 100);
-		Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_GRAY2RGBA,
-				4);
-		Imgproc.HoughLinesP(mIntermediateMat, octagonImage, 1,
-				Math.PI / 180, threshold, minLineSize, lineGap);
-
-		double[][] vec2 = new double[octagonImage.cols()][5];
-
-		// Imgproc.HoughLinesP(thresholdImage, lines, 1, Math.PI/180,
-		// threshold, minLineSize, lineGap);
-
-		for (int x = 0; x < octagonImage.cols(); x++) {
-			double[] vec = octagonImage.get(0, x);
-			double x1 = vec[0], y1 = vec[1], x2 = vec[2], y2 = vec[3];
-
-			double m = (y2) - (y1) / (x2) - (x1);
-			double b = y1 - (m) * x1;
-			// double m2 =1;
-
-			for (int m1 = 0; m1 < vec2.length; m1++) {
-				if (x2 == 0)
-					break;
-				int alpha = (int) Math.toDegrees(Math.atan(m - vec2[m1][4]
-						/ 1 + m * vec2[m1][4]));
-				if (!(alpha >= 91) && !(alpha <= 89)) {
-
-					vec2[x][0] = x1;
-					vec2[x][1] = y1;
-					vec2[x][2] = x2;
-					vec2[x][3] = y2;
-					vec2[x][4] = m;
-					Point start = new Point(x1, y1);
-					Point end = new Point(x2, y2);
-					Core.line(mRgba, start, end, new Scalar(255, 0, 0), 3);
-				}
-			}
-
-			// vec2[x][0] = x1;
-			// vec2[x][1] = y1;
-			// vec2[x][2] = x2;
-			// vec2[x][3] = y2;
-			// vec2[x][4] = m;
-
-		}
-
-		// for (int m1 = 0; m1 < vec2.length; m1++)
-		// {
-		// for (int m2 = 1; m2 < vec2.length; m2++)
-		// {
-		// int alpha = (int)
-		// Math.toDegrees(Math.atan(vec2[m1][4]-vec2[m2][4]/1+vec2[m1][4]*vec2[m2][4]));
-		//
-		// if (!(alpha > 230) && !(alpha < 220)){
-		// Point start = new Point(vec2[m1][0], vec2[m1][1]);
-		// Point end = new Point(vec2[m1][2], vec2[m1][3]);
-		// Core.line(mRgba, start, end, new Scalar(255,0,0), 3);
-		//
-		// Point start2 = new Point(vec2[m2][0], vec2[m2][1]);
-		// Point end2 = new Point(vec2[m2][2], vec2[m2][3]);
-		// Core.line(mRgba, start2, end2, new Scalar(255,0,0), 3);
-		// }
-		//
-		// }
-		// }
+		
+		Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
+		Core.inRange(mIntermediateMat, new Scalar(h_min, s_min, v_min),
+				new Scalar(h_max, s_max, v_max), mRgba);
+		
+		//Imgproc.GaussianBlur(mIntermediateMat, mRgba, new Size(5, 5), 0, 0);
+		
 		return mRgba;
 	}
 	
@@ -287,9 +274,7 @@ public static Point computeIntersect(double[] a, double[] b)
 //	}
 
 public static Mat shapeDetection(CvCameraViewFrame inputFrame){
-	
-	
-		
+
 	mRgba = inputFrame.rgba();
 
 	MatOfPoint2f approx2f = new MatOfPoint2f();
@@ -303,10 +288,10 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
     
     Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
 	Core.inRange(mIntermediateMat, new Scalar(h_min, s_min, v_min),
-			new Scalar(h_max, s_max, v_max), mIntermediateMat);
+			new Scalar(h_max, s_max, v_max), mRgba);
 	//Imgproc.dilate(mRgba, mRgba, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3,3)));
 	//Imgproc.Canny(mRgba, mIntermediateMat, 100, 100);
-	Imgproc.GaussianBlur(mIntermediateMat, mRgba, new Size(5, 5), 0, 0);
+	//Imgproc.GaussianBlur(mIntermediateMat, mRgba, new Size(5, 5), 0, 0);
 	//Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_HSV2BGR, 4);
 
 	Imgproc.findContours(mRgba, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -339,7 +324,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	    	
 	    	
 	    	
-	    	Imgproc.approxPolyDP(contour2f, approx2f, /*Imgproc.arcLength(contour2f, true)*0.02*/ 3, true);
+	    	Imgproc.approxPolyDP(contour2f, approx2f, Imgproc.arcLength(contour2f, true)*0.01 /*3*/, true);
 	    	approx.fromArray(approx2f.toArray());
 	    	
 	    	Converters.Mat_to_vector_Point(approx2f, approxList);
@@ -360,13 +345,14 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	        //Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreisfläche: " + kreisFlaeche);
 	        //Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteckfläche: " + achteckFlaeche);
 	    	
-	    	if (Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && (int)(approx.total()) > 2 && (int)(approx.total()) < 9)
+	    	if ((Imgproc.arcLength(contour2f, true) > 150) && Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && (int)(approx.total()) > 2 && (int)(approx.total()) < 9)
 	        {
 	    		if ((int)(approx.total()) == 3){
 	    			Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Dreieck!");
+	    			Core.putText(mRgba, "Dreieck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			squares.add(approx);	    	
 	    		}
-	    		else if((int)(approx.total()) >= 4 && (int)(approx.total()) <= 8  )
+	    		else if((int)(approx.total()) >= 4 && (int)(approx.total()) <= 8  ){
 	        	cosine.clear();
 	            double maxCosine = 0;
 	            double minCosine = 0;
@@ -386,6 +372,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	            if(vtc == 4 && minCosine >= -0.1 && maxCosine <= 0.3 )
 	            {
 	            Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Viereck!");
+	            Core.putText(mRgba, "Viereck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	            squares.add(approx);
 	            
 	            }
@@ -396,35 +383,29 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	            //else if (vtc == 6 && minCosine >= -0.55 && maxCosine <= -0.45)
 	            	//squares.add(approx);
 	            
-	            else if (vtc == 8){
+	            else if (vtc == 8 && minCosine >= -1.04 && maxCosine <= -0.94){
 	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteck!");
+	            	Core.putText(mRgba, "Achteck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	            	squares.add(approx);
 	            }
+	    		}
 	        }
-	    	if(Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && a <= 0.2 && b <= 0.2){
+	    	if(Imgproc.arcLength(contour2f, true) > 150 && Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && a <= 0.2 && b <= 0.2 && approx.total() > 8){
 	    		Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreis!");
+	    		Core.putText(mRgba, "Kreis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    		squares.add(approx);
 	        }
 	    	
+	    	
 	    	for (int j = 0; j < squares.size(); j++)
 		    {
-
+	    	Integer x = (int) Imgproc.arcLength(contour2f, true);
+	    	Point p = approxList.get(approxList.size()-1);
+	    	Core.putText(mRgba, x.toString() , new Point(p.x +10, p.y + 50), 3, 0.5,  new Scalar(255, 0, 0, 255));	
 		    Imgproc.drawContours(mRgba, squares, j, new Scalar(255, 255, 0, 255), 10);
 		    }
 
 	    }
-	    
-
-	    
-	    
-	    
-	    
-	    
-	//}
-	
-
-
-		
 
 	return mRgba;
 }
@@ -551,5 +532,37 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 		mIntermediateMat = new Mat(height, width, CvType.CV_8UC4);
 		mGray = new Mat(height, width, CvType.CV_8UC1);
 	}
-	
+
+	public static void roterFrame(){
+		h_min = 0;
+		h_max = 13;
+		s_min = 75;
+		s_max = 256;
+		v_min = 75;
+		v_max = 256;
+	}
+	public static void gelberFrame(){
+		h_min = 14;
+		h_max = 37;
+		s_min = 75;
+		s_max = 256;
+		v_min = 75;
+		v_max = 256;
+	}
+	public void schwarzerFrame(){
+		h_min = 14;
+		h_max = 37;
+		s_min = 75;
+		s_max = 256;
+		v_min = 75;
+		v_max = 256;
+	}
+	public void weisserFrame(){
+		h_min = 14;
+		h_max = 37;
+		s_min = 75;
+		s_max = 256;
+		v_min = 75;
+		v_max = 256;
+	}
 }

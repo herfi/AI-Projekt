@@ -19,5 +19,7 @@
     <string name="button_opencv_gray">Convert Image to Grayscale </string>
     <string name="button_opencv_gaussianblur">Convert Image to GaussianBlur</string>
     <string name="button_hough_circle">Show a Circle</string>
-	<string name="button_opencv_normal">Show Image</string>
+    <string name="button_opencv_normal">Show Image</string>
+    <string name="title_activity_show_shape">ShowShape</string>
+
 </resources>

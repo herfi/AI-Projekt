@@ -1,15 +1,31 @@
 package com.example.ai_projekt;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
+
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.utils.Converters;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -19,22 +35,22 @@ import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		OnSeekBarChangeListener {
 	private final static String TAG = "OpenCVLoader/BaseLoaderCallback";
-	private CameraBridgeViewBase mOpenCvCameraView;
+	public static CameraBridgeViewBase mOpenCvCameraView;
 
 	private static final int VIEW_MODE_RGBA = 0;
 	private static final int VIEW_MODE_SQUARE = 3;
 	private static final int VIEW_MODE_CIRCLE = 5;
-	private static final int VIEW_MODE_OCTAGON = 6;
+	private static final int VIEW_MODE_HSV = 6;
 	private static final int VIEW_MODE_SHAPE = 7;
-	
-	
 
 	private int mViewMode;
-	private Mat mRgba;
+	private static Mat mRgba;
+	private static Mat mIntermediateMat;
 	
 	android.hardware.Camera camera;
 
@@ -58,7 +74,8 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	private TextView textProgress4;
 	private TextView textProgress5;
 	private TextView textProgress6;
-
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.i(TAG, "called onCreate");
@@ -75,16 +92,16 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		mOpenCvCameraView.setCvCameraViewListener(this);
 		
 		bar = (SeekBar) findViewById(R.id.seekBar1); // make seekbar object
-		bar.setMax(256);
+		bar.setMax(400);
 		bar.setProgress(1);
 		bar.setOnSeekBarChangeListener(this); // set seekbar listener.
 		Detection.setH_min(1);
 		
 		bar2 = (SeekBar) findViewById(R.id.seekBar2); // make seekbar object
-		bar2.setMax(300);
-		bar2.setProgress(25);
+		bar2.setMax(400);
+		bar2.setProgress(13);
 		bar2.setOnSeekBarChangeListener(this); // set seekbar listener.
-		Detection.setH_max(25);
+		Detection.setH_max(13);
 
 		bar3 = (SeekBar) findViewById(R.id.seekBar3); // make seekbar object
 		bar3.setMax(300);
@@ -96,7 +113,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		bar4.setMax(300);
 		bar4.setProgress(251);
 		bar4.setOnSeekBarChangeListener(this); // set seekbar listener.
-		Detection.setS_max(251);
+		Detection.setS_max(256);
 
 		bar5 = (SeekBar) findViewById(R.id.seekBar5); // make seekbar object
 		bar5.setMax(300);
@@ -109,8 +126,6 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		bar6.setProgress(257);
 		bar6.setOnSeekBarChangeListener(this); // set seekbar listener.
 		Detection.setV_max(257);
-
-		
 		
 		// make text label for progress value
 		textProgress1 = (TextView) findViewById(R.id.textView1);
@@ -135,9 +150,9 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	public boolean onCreateOptionsMenu(Menu menu) {
 		Log.i(TAG, "called onCreateOptionsMenu");
 		mItemPreviewRGBA = menu.add("Preview RGBA");
-		mItemPreviewSQUARE = menu.add("Find Square");
+		mItemPreviewSQUARE = menu.add("Find Colorshapes ");
 		mItemPreviewCircle = menu.add("Find Circle");
-		mItemPreviewOctagon = menu.add("Find Octagon");
+		mItemPreviewOctagon = menu.add("HSV");
 		mItemPreviewShape = menu.add("Find Shaps");
 
 		return true;
@@ -181,16 +196,14 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	}
 
 	public void onCameraViewStarted(int width, int height) {
-//		mRgba = new Mat(height, width, CvType.CV_8UC4);
-//		mIntermediateMat = new Mat(height, width, CvType.CV_8UC4);
-//		mGray = new Mat(height, width, CvType.CV_8UC1);
+		mRgba = new Mat(height, width, CvType.CV_8UC4);
+		mIntermediateMat = new Mat(height, width, CvType.CV_8UC4);
 		Detection.matIni(width, height);
 	}
 
 	public void onCameraViewStopped() {
-//		mRgba.release();
-//		mGray.release();
-//		mIntermediateMat.release();
+		mRgba.release();
+		mIntermediateMat.release();
 		Detection.matRelease();
 	}
 
@@ -205,7 +218,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 
 		case VIEW_MODE_SQUARE:
 			//Imgproc.cvtColor(inputFrame.rgba(), mRgba, Imgproc.COLOR_RGB2HSV, 4);
-			mRgba = Detection.squareHsvDetection(inputFrame);
+			mRgba = Detection.shapeDetectionColors(inputFrame);
 			break;
 
 		case VIEW_MODE_CIRCLE:
@@ -213,7 +226,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			
 			break;
 			
-		case VIEW_MODE_OCTAGON:
+		case VIEW_MODE_HSV:
 
 			mRgba = Detection.octagonDetection(inputFrame);
 			
@@ -222,6 +235,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			
 		case VIEW_MODE_SHAPE:
 
+			
 			mRgba = Detection.shapeDetection(inputFrame);
 			
 
@@ -243,7 +257,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		} else if (item == mItemPreviewSQUARE) {
 			mViewMode = VIEW_MODE_SQUARE;
 		} else if (item == mItemPreviewOctagon) {
-			mViewMode = VIEW_MODE_OCTAGON;
+			mViewMode = VIEW_MODE_HSV;
 		} else if (item == mItemPreviewShape) {
 			mViewMode = VIEW_MODE_SHAPE;
 		}
@@ -259,9 +273,10 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		
 		
 		if (seekBar.getId() == bar.getId()) {
-			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
+			if (progress != 0 && mViewMode == VIEW_MODE_HSV){
 				textProgress1.setText("The value is: " + progress);
-				Detection.setThreshold(progress);
+				//Detection.setMaxCorners(progress);
+				Detection.setH_min(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress1.setText("The value is: " + (int) (progress));
@@ -274,9 +289,10 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			}
 		}
 		if (seekBar.getId() == bar2.getId()) {
-			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
+			if (progress != 0 && mViewMode == VIEW_MODE_HSV){
 				textProgress2.setText("The value is: " + progress);
-				Detection.setminLineSize(progress);
+				//Detection.setQualityLevel(progress);
+				Detection.setH_max(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress2.setText("The value is: " + (int) (progress));
@@ -290,9 +306,10 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		}
 
 		if (seekBar.getId() == bar3.getId()) {
-			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
+			if (progress != 0 && mViewMode == VIEW_MODE_HSV){
 				textProgress3.setText("The value is: " + progress);
-				Detection.setlineGap(progress);
+				//Detection.setMinDistance(progress);
+				Detection.setS_min(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress3.setText("The value is: " + (int) (progress));
@@ -306,9 +323,9 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		}
 
 		if (seekBar.getId() == bar4.getId()) {
-			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
-				textProgress4.setText("The value is: " + progress);
-				//Detection.threshold = progress;
+			if (progress != 0 && mViewMode == VIEW_MODE_HSV){
+				textProgress4.setText("The value is: " + (int) (progress));
+				Detection.setS_max(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress4.setText("The value is: " + (int) (progress));
@@ -320,9 +337,9 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			}
 		}
 		if (seekBar.getId() == bar5.getId()) {
-			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
-				textProgress5.setText("The value is: " + progress);
-				//Detection.minLineSize = progress;
+			if (progress != 0 && mViewMode == VIEW_MODE_HSV){
+				textProgress4.setText("The value is: " + (int) (progress));
+				Detection.setS_max(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress5.setText("The value is: " + (int) (progress));
@@ -335,9 +352,10 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		}
 
 		if (seekBar.getId() == bar6.getId()) {
-			if (progress != 0 && mViewMode == VIEW_MODE_OCTAGON){
-				textProgress6.setText("The value is: " + progress);
-				//Detection.lineGap = progress;
+			if (progress != 0 && mViewMode == VIEW_MODE_HSV){
+				progress=bar6.getProgress();
+				textProgress6.setText("The value is: " + (int) (progress));
+				Detection.setV_max(progress);
 			}
 			else if (progress != 0 && mViewMode == VIEW_MODE_CIRCLE) {
 				textProgress6.setText("The value is: " + (int) (progress));
