@@ -390,12 +390,13 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	            }
 	    		}
 	        }
-	    	if(Imgproc.arcLength(contour2f, true) > 150 && Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && a <= 0.2 && b <= 0.2 && approx.total() > 8){
+	    	else if(Imgproc.arcLength(contour2f, true) > 150 && Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && a <= 0.2 && b <= 0.2 && approx.total() > 8){
 	    		Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreis!");
 	    		Core.putText(mRgba, "Kreis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    		squares.add(approx);
 	        }
-	    	
+	    	else
+	    		continue;
 	    	
 	    	for (int j = 0; j < squares.size(); j++)
 		    {
@@ -407,6 +408,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 
 	    }
 
+	
 	return mRgba;
 }
 
