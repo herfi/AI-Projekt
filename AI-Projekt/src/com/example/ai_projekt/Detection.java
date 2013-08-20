@@ -21,6 +21,7 @@ import org.opencv.utils.Converters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.provider.MediaStore.Images;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -76,13 +77,13 @@ public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
     
     Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
 	Core.inRange(mIntermediateMat, new Scalar(h_min, s_min, v_min),
-			new Scalar(h_max, s_max, v_max), mRgba);
+			new Scalar(h_max, s_max, v_max), mIntermediateMat);
 	//Imgproc.dilate(mRgba, mRgba, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, new Size(3,3)));
 	//Imgproc.Canny(mRgba, mIntermediateMat, 100, 100);
 	//Imgproc.GaussianBlur(mIntermediateMat, mRgba, new Size(5, 5), 0, 0);
 	//Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_HSV2BGR, 4);
 
-	Imgproc.findContours(mRgba, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+	Imgproc.findContours(mIntermediateMat, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 	    
 	    for (int i = 0; i < contours.size(); i++)
 	    {
@@ -117,7 +118,7 @@ public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
 	        {
 	    		if ((int)(approx.total()) == 3){
 	    			Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Dreieck!");
-	    			Core.putText(mRgba, "Dreieck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    			Core.putText(mIntermediateMat, "Dreieck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			squares.add(approx);	    	
 	    		}
 	    		else if((int)(approx.total()) >= 4 && (int)(approx.total()) <= 8  ){
@@ -142,7 +143,7 @@ public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
 	            if(vtc == 4 && minCosine >= -0.1 && maxCosine <= 0.3 )
 	            {
 	            Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Viereck!");
-	            Core.putText(mRgba, "Viereck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	            Core.putText(mIntermediateMat, "Viereck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	            squares.add(approx);
 	            
 	            }
@@ -153,16 +154,16 @@ public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
 	            //else if (vtc == 6 && minCosine >= -0.55 && maxCosine <= -0.45)
 	            	//squares.add(approx);
 	            
-	            else if (vtc == 8 /*&& minCosine >= 0.98 && maxCosine <= 0.86*/){
+	            else if (vtc == 8 && minCosine >= -0.80 && maxCosine <= -0.59){
 	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteck!");
-	            	Core.putText(mRgba, "Achteck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	            	Core.putText(mIntermediateMat, "Achteck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	            	squares.add(approx);
 	            }
 	    		}
 	        }
 	    	else if(Imgproc.arcLength(contour2f, true) > 150 && Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && a <= 0.2 && b <= 0.2 && approx.total() > 8){
 	    		Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreis!");
-	    		Core.putText(mRgba, "Kreis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    		Core.putText(mIntermediateMat, "Kreis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    		squares.add(approx);
 	        }
 	    	else
@@ -172,14 +173,17 @@ public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
 		    {
 	    	Integer x = (int) Imgproc.arcLength(contour2f, true);
 	    	Point p = approxList.get(approxList.size()-1);
-	    	Core.putText(mRgba, x.toString() , new Point(p.x +10, p.y + 50), 3, 0.5,  new Scalar(255, 0, 0, 255));	
-		    Imgproc.drawContours(mRgba, squares, j, new Scalar(255, 255, 0, 255), 10);
+	    	Core.putText(mIntermediateMat, x.toString() , new Point(p.x +10, p.y + 50), 3, 0.5,  new Scalar(255, 0, 0, 255));	
+		    Imgproc.drawContours(mIntermediateMat, squares, j, new Scalar(255, 255, 0, 255), -1);
 		    }
 
 	    }
 
+	    //Core.bitwise_and(mIntermediateMat, mRgba, mRgba);
 	
-	return mRgba;
+	    mRgba.copyTo(mIntermediateMat, mIntermediateMat);
+	    
+	return mIntermediateMat;
 	}
 
 public static Point computeIntersect(double[] a, double[] b)
