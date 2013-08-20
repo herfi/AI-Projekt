@@ -295,26 +295,6 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	//Imgproc.cvtColor(mIntermediateMat, mRgba, Imgproc.COLOR_HSV2BGR, 4);
 
 	Imgproc.findContours(mRgba, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-	
-	
-	
-	
-	//for (int idx = 0; idx < contours.size(); idx++) {
-		
-		
-		
-		
-	    
-//	    double contourarea = Imgproc.contourArea(contour2f);
-//	    
-//	    if (contourarea > maxArea) {
-//	        maxArea = contourarea;
-//	        maxAreaIdx = idx;
-//	    }
-	    
-	    
-	    
-	    
 	    
 	    for (int i = 0; i < contours.size(); i++)
 	    {
@@ -383,7 +363,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	            //else if (vtc == 6 && minCosine >= -0.55 && maxCosine <= -0.45)
 	            	//squares.add(approx);
 	            
-	            else if (vtc == 8 && minCosine >= -1.04 && maxCosine <= -0.94){
+	            else if (vtc == 8 /*&& minCosine >= -1.20 && maxCosine <= -0.80*/){
 	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteck!");
 	            	Core.putText(mRgba, "Achteck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	            	squares.add(approx);
