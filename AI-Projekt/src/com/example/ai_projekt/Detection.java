@@ -136,6 +136,8 @@ public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
 	            maxCosine = cosine.get(vtc-2);
 	            minCosine = cosine.get(0);
 
+	            Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "maxCosine= " + maxCosine);
+	            Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "minCosine= " + minCosine);
 	            
 	            if(vtc == 4 && minCosine >= -0.1 && maxCosine <= 0.3 )
 	            {
@@ -151,7 +153,7 @@ public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
 	            //else if (vtc == 6 && minCosine >= -0.55 && maxCosine <= -0.45)
 	            	//squares.add(approx);
 	            
-	            else if (vtc == 8 && minCosine >= 0.98 && maxCosine <= 0.86){
+	            else if (vtc == 8 /*&& minCosine >= 0.98 && maxCosine <= 0.86*/){
 	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteck!");
 	            	Core.putText(mRgba, "Achteck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	            	squares.add(approx);
@@ -338,7 +340,7 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 	            //else if (vtc == 6 && minCosine >= -0.55 && maxCosine <= -0.45)
 	            	//squares.add(approx);
 	            
-	            else if (vtc == 8 /*&& minCosine >= -1.20 && maxCosine <= -0.80*/){
+	            else if (vtc == 8 && minCosine >= -0.80 && maxCosine <= -0.59){
 	            	Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteck!");
 	            	Core.putText(mRgba, "Achteck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	            	squares.add(approx);
