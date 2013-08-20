@@ -29,6 +29,7 @@ public class Detection extends Activity {
 	
 	private static Mat mRgba;
 	private static Mat mIntermediateMat;
+	private static Mat mContour;
 	private static Mat mGray;
 	private static int threshold = 1, minLineSize = 1, lineGap = 1;
 	private static int h_min = 0, h_max = 0, s_min = 0, s_max = 0, v_min = 0, v_max = 0;
@@ -50,20 +51,32 @@ public static Mat circleHsvDetection(CvCameraViewFrame inputFrame){
 		return mRgba;
 	}
 	
-public static Mat shapeDetectionColors(CvCameraViewFrame inputFrame){
-		/*
-		switch (frameWert) {
-		case 1:
-			roterFrame();
-			frameWert++;
-			break;
-
-		case 2:
-			gelberFrame();
-			frameWert = 1;
-			break;
-		}
-		*/
+public static Mat shapeDetectionAndExtraction(CvCameraViewFrame inputFrame){
+	
+	/*
+	if(frameWert >= 1 && frameWert <= 3){
+		roterFrame();
+		frameWert++;
+	}
+	else if(frameWert >= 4 && frameWert <= 6){
+		gelberFrame();
+		frameWert++;
+	}
+	else if(frameWert >= 7 && frameWert <= 9){
+		gruenerFrame();
+		frameWert++;
+	}
+	else if(frameWert >= 10 && frameWert <= 11){
+		blauerFrame();
+		frameWert++;
+	}
+	else if(frameWert == 12){
+		blauerFrame();
+		frameWert = 1;
+	}
+	
+	*/
+	
 	mRgba = inputFrame.rgba();
 
 	MatOfPoint2f approx2f = new MatOfPoint2f();
@@ -206,7 +219,7 @@ public static Point computeIntersect(double[] a, double[] b)
         return pt;
 }
 
-	public static Mat octagonDetection(CvCameraViewFrame inputFrame){
+	public static Mat hsv(CvCameraViewFrame inputFrame){
 		
 		mRgba = inputFrame.rgba();
 		
@@ -498,34 +511,34 @@ public static Mat shapeDetection(CvCameraViewFrame inputFrame){
 
 	public static void roterFrame(){
 		h_min = 0;
-		h_max = 13;
+		h_max = 16;
 		s_min = 75;
 		s_max = 256;
-		v_min = 75;
+		v_min = 55;
 		v_max = 256;
 	}
 	public static void gelberFrame(){
-		h_min = 14;
+		h_min = 17;
 		h_max = 37;
 		s_min = 75;
 		s_max = 256;
-		v_min = 75;
+		v_min = 55;
 		v_max = 256;
 	}
-	public void schwarzerFrame(){
-		h_min = 14;
-		h_max = 37;
+	public static void gruenerFrame(){
+		h_min = 40;
+		h_max = 90;
 		s_min = 75;
 		s_max = 256;
-		v_min = 75;
+		v_min = 55;
 		v_max = 256;
 	}
-	public void weisserFrame(){
-		h_min = 14;
-		h_max = 37;
+	public static void blauerFrame(){
+		h_min = 100;
+		h_max = 140;
 		s_min = 75;
 		s_max = 256;
-		v_min = 75;
+		v_min = 55;
 		v_max = 256;
 	}
 }
