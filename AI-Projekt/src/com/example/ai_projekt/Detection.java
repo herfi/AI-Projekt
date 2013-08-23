@@ -145,64 +145,64 @@ public static Mat shapeDetectionAndExtraction(CvCameraViewFrame inputFrame){
 	    			
 	    			Point center = new Point(centerX/3, centerY/3);
 	    			
-	    			Core.circle(mIntermediateMat, center, 3, new Scalar(255, 255, 0, 255), 20);
+	    			//Core.circle(mIntermediateMat, center, 3, new Scalar(255, 255, 0, 255), 20);
 	    			
 	    			//Gefahrenzeichen -> Dreieck mit 1er Ecke oben und 2 Ecken unten
 	    			if((approxList.get(0).x <= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x <= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x < center.x && approxList.get(1).y > center.y) && (approxList.get(2).x > center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x >= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x >= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x < center.x && approxList.get(1).y > center.y) && (approxList.get(2).x > center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			
 	    			else if((approxList.get(0).x < center.x && approxList.get(0).y > center.y) && (approxList.get(1).x <= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x > center.x && approxList.get(0).y > center.y) && (approxList.get(1).x <= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x < center.x && approxList.get(0).y > center.y) && (approxList.get(1).x >= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x > center.x && approxList.get(0).y > center.y) && (approxList.get(1).x >= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			
 	    			
 	    			else if((approxList.get(0).x > center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y > center.y) && (approxList.get(2).x <= center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x < center.x && approxList.get(0).y > center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x <= center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x > center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y > center.y) && (approxList.get(2).x >= center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x < center.x && approxList.get(0).y > center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x >= center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Gefahrzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			
 	    			//Vorschriftzeichen -> Dreieck mit 2 Ecken oben und 1er Ecke unten
 	    			else if((approxList.get(0).x >= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x >= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x > center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x <= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x <= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x > center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			
 	    			else if((approxList.get(0).x < center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y < center.y) && (approxList.get(2).x >= center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x > center.x && approxList.get(0).y < center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x >= center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x < center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y < center.y) && (approxList.get(2).x <= center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x > center.x && approxList.get(0).y < center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x <= center.x && approxList.get(2).y > center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			
 	    			else if((approxList.get(0).x > center.x && approxList.get(0).y < center.y) && (approxList.get(1).x >= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x < center.x && approxList.get(0).y < center.y) && (approxList.get(1).x >= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x > center.x && approxList.get(0).y < center.y) && (approxList.get(1).x <= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			else if((approxList.get(0).x < center.x && approxList.get(0).y < center.y) && (approxList.get(1).x <= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y))
-	    				Core.putText(mIntermediateMat, "Vorschriftzeichen", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+	    				Core.putText(mIntermediateMat, "Vorfahrt gewähren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
 	    			
 	    			squares.add(approx);	    	
 	    		}
