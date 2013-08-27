@@ -151,9 +151,9 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		Log.i(TAG, "called onCreateOptionsMenu");
 		mItemPreviewRGBA = menu.add("Preview RGBA");
 		mItemPreviewShapeExtraction = menu.add("Shape extraction ");
-		mItemPreviewCircle = menu.add("Find Circle");
+		//mItemPreviewCircle = menu.add("Find Circle");
 		mItemHSV = menu.add("HSV");
-		//mItemPreviewShape = menu.add("Find Shaps");
+		mItemPreviewShape = menu.add("Find Shaps");
 
 		return true;
 	}
@@ -220,11 +220,12 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			//Imgproc.cvtColor(inputFrame.rgba(), mRgba, Imgproc.COLOR_RGB2HSV, 4);
 			mRgba = Detection.shapeDetectionAndExtraction(inputFrame);
 			break;
-
+		/*
 		case VIEW_MODE_CIRCLE:
 			mRgba = Detection.circleHsvDetection(inputFrame);
 			
 			break;
+			*/
 			
 		case VIEW_MODE_HSV:
 
@@ -232,7 +233,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			
 
 			break;
-		/*	
+			
 		case VIEW_MODE_SHAPE:
 
 			
@@ -240,7 +241,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 			
 
 			break;
-			*/
+			
 		}
 
 		return mRgba;
