@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.provider.MediaStore.Images;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class Detection extends Activity {
@@ -39,6 +40,14 @@ public class Detection extends Activity {
 	private static int frameWert = 1;
 	android.hardware.Camera camera;
 
+	static boolean dreieckObenErkannt = false;
+	static boolean dreieckUntenErkannt = false;
+	static boolean viereckErkannt = false;
+	static boolean kreisErkannt = false;
+	static boolean achteckErkannt = false;
+	
+	static int frameFarbe;
+	
 	public static Mat circleHsvDetection(CvCameraViewFrame inputFrame){
 
 		mRgba = inputFrame.rgba();
@@ -58,8 +67,8 @@ public class Detection extends Activity {
 	 *  
 	 */
 	public static Mat shapeDetectionAndExtraction(CvCameraViewFrame inputFrame){
-
-		/*
+		
+		
 	if(frameWert >= 1 && frameWert <= 3){
 		roterFrame();
 		frameWert++;
@@ -81,7 +90,7 @@ public class Detection extends Activity {
 		frameWert = 1;
 	}
 
-		 */
+		 
 
 		//Inputframe
 		mRgba = inputFrame.rgba();
@@ -96,7 +105,7 @@ public class Detection extends Activity {
 		List<MatOfPoint> squares = new ArrayList<MatOfPoint>();
 		List<Point> approxList = new Vector<Point>();
 		List<Double> cosine = new LinkedList<Double>();
-
+		
 		//Umwandlung vom RGB in den HSV-Farbraum
 		Imgproc.cvtColor(mRgba, mIntermediateMat, Imgproc.COLOR_RGB2HSV, 4);
 
@@ -162,61 +171,131 @@ public class Detection extends Activity {
 					//Core.circle(mIntermediateMat, center, 3, new Scalar(255, 255, 0, 255), 20);
 
 					//Gefahrenzeichen -> Dreieck mit 1er Ecke oben und 2 Ecken unten
-					if((approxList.get(0).x <= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y))
+					if((approxList.get(0).x <= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y)){
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x <= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x < center.x && approxList.get(1).y > center.y) && (approxList.get(2).x > center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x >= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x >= center.x && approxList.get(0).y < center.y) && (approxList.get(1).x < center.x && approxList.get(1).y > center.y) && (approxList.get(2).x > center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 
 					else if((approxList.get(0).x < center.x && approxList.get(0).y > center.y) && (approxList.get(1).x <= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x > center.x && approxList.get(0).y > center.y) && (approxList.get(1).x <= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x < center.x && approxList.get(0).y > center.y) && (approxList.get(1).x >= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x > center.x && approxList.get(0).y > center.y) && (approxList.get(1).x >= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 
 
 					else if((approxList.get(0).x > center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y > center.y) && (approxList.get(2).x <= center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x < center.x && approxList.get(0).y > center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x <= center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x > center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y > center.y) && (approxList.get(2).x >= center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 					else if((approxList.get(0).x < center.x && approxList.get(0).y > center.y) && (approxList.get(1).x > center.x && approxList.get(1).y > center.y) && (approxList.get(2).x >= center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Gefahr/Hinweis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckObenErkannt = true;
+					}
 
 					//Vorschriftzeichen -> Dreieck mit 2 Ecken oben und 1er Ecke unten
-					else if((approxList.get(0).x >= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y))
+					else if((approxList.get(0).x >= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y)){
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x >= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x > center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x <= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x <= center.x && approxList.get(0).y > center.y) && (approxList.get(1).x > center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 
 					else if((approxList.get(0).x < center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y < center.y) && (approxList.get(2).x >= center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x > center.x && approxList.get(0).y < center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x >= center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x < center.x && approxList.get(0).y < center.y) && (approxList.get(1).x > center.x && approxList.get(1).y < center.y) && (approxList.get(2).x <= center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x > center.x && approxList.get(0).y < center.y) && (approxList.get(1).x < center.x && approxList.get(1).y < center.y) && (approxList.get(2).x <= center.x && approxList.get(2).y > center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 
 					else if((approxList.get(0).x > center.x && approxList.get(0).y < center.y) && (approxList.get(1).x >= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x < center.x && approxList.get(0).y < center.y) && (approxList.get(1).x >= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x > center.x && approxList.get(0).y < center.y) && (approxList.get(1).x <= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x < center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 					else if((approxList.get(0).x < center.x && approxList.get(0).y < center.y) && (approxList.get(1).x <= center.x && approxList.get(1).y < center.y) && (approxList.get(2).x > center.x && approxList.get(2).y < center.y))
+					{
 						Core.putText(mIntermediateMat, "Vorfahrt gewaehren", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						dreieckUntenErkannt = true;
+					}
 
 					squares.add(approx);	    	
 				}
@@ -245,6 +324,7 @@ public class Detection extends Activity {
 					{
 						Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Viereck!");
 						Core.putText(mIntermediateMat, "Viereck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						viereckErkannt = true;
 						squares.add(approx);
 
 					}
@@ -259,6 +339,7 @@ public class Detection extends Activity {
 					else if (vtc == 8 && minCosine >= -0.80 && maxCosine <= -0.59){
 						Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Achteck!");
 						Core.putText(mIntermediateMat, "Achteck", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+						achteckErkannt = true;
 						squares.add(approx);
 					}
 				}
@@ -267,6 +348,7 @@ public class Detection extends Activity {
 			else if(Imgproc.arcLength(contour2f, true) > 150 && Math.abs((Imgproc.contourArea(contour))) > 1000 && Imgproc.isContourConvex(approx) && a <= 0.2 && b <= 0.2 && approx.total() > 8){
 				Log.i(android.content.Context.TEXT_SERVICES_MANAGER_SERVICE, "Kreis!");
 				Core.putText(mIntermediateMat, "Kreis", approxList.get(approxList.size()-1), 3, 0.5,  new Scalar(255, 0, 0, 255));
+				kreisErkannt = true;
 				squares.add(approx);
 			}
 			else
@@ -718,6 +800,7 @@ public class Detection extends Activity {
 		s_max = 256;
 		v_min = 55;
 		v_max = 256;
+		frameFarbe=1;
 	}
 	public static void gelberFrame(){
 		h_min = 17;
@@ -726,6 +809,7 @@ public class Detection extends Activity {
 		s_max = 256;
 		v_min = 55;
 		v_max = 256;
+		frameFarbe=2;
 	}
 	public static void gruenerFrame(){
 		h_min = 40;
@@ -734,6 +818,7 @@ public class Detection extends Activity {
 		s_max = 256;
 		v_min = 55;
 		v_max = 256;
+		frameFarbe=3;
 	}
 	public static void blauerFrame(){
 		h_min = 100;
@@ -742,5 +827,6 @@ public class Detection extends Activity {
 		s_max = 256;
 		v_min = 55;
 		v_max = 256;
+		frameFarbe=4;
 	}
 }

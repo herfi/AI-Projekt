@@ -34,6 +34,7 @@ import android.view.SurfaceView;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,6 +76,8 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 	private TextView textProgress5;
 	private TextView textProgress6;
 	
+	private ImageView verkehrszeichenBild;
+	private TextView verkehrszeichenName;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,7 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 		mOpenCvCameraView.setCvCameraViewListener(this);
 		
+		/*
 		bar = (SeekBar) findViewById(R.id.seekBar1); // make seekbar object
 		bar.setMax(220);
 		bar.setProgress(1);
@@ -144,6 +148,10 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 
 		// make text label for progress value
 		textProgress6 = (TextView) findViewById(R.id.textView6);
+		*/
+		
+		verkehrszeichenBild = (ImageView) findViewById(R.id.AbbildungSchild);
+		verkehrszeichenName = (TextView) findViewById(R.id.SchildName);
 	}
 
 	@Override
@@ -219,6 +227,143 @@ public class OpenCVExample extends Activity implements CvCameraViewListener2,
 		case VIEW_MODE_SHAPE_EXTRACTION:
 			//Imgproc.cvtColor(inputFrame.rgba(), mRgba, Imgproc.COLOR_RGB2HSV, 4);
 			mRgba = Detection.shapeDetectionAndExtraction(inputFrame);
+			
+			switch (Detection.frameFarbe) {
+			case 1:
+				if(Detection.kreisErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/rotes_vorschriftszeichen", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Vorschriftszeichen");
+								Detection.kreisErkannt = false;
+					    }
+					});
+				}
+				/*
+				if(Detection.viereckErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/rotes_vorschriftszeichen", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Vorschriftszeichen");
+								Detection.viereckErkannt = false;
+					    }
+					});
+				}
+				*/
+				
+				if(Detection.dreieckObenErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/gefahrenzeichen", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Gefahrenzeichen");
+								Detection.dreieckObenErkannt = false;
+					    }
+					});
+				}
+				
+				if(Detection.dreieckUntenErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/vorfahrt_gewaehren", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Vorfahrt gew‰hren");
+								Detection.dreieckUntenErkannt = false;
+					    }
+					});
+				}
+				
+				if(Detection.achteckErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/stoppschild", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Stoppschild");
+								Detection.achteckErkannt = false;
+					    }
+					});
+				}
+				
+				break;
+				
+			case 2:
+				
+				if(Detection.viereckErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/vorfahrtsstrasse", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Vorfahrsstraﬂe");
+								Detection.viereckErkannt = false;
+					    }
+					});
+				}
+				
+				break;
+				
+			case 3:
+				
+				
+				if(Detection.viereckErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/ortsschid", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Ortsschild");
+								Detection.viereckErkannt = false;
+					    }
+					});
+				}
+				
+				break;
+	
+			case 4:
+				if(Detection.kreisErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/blaues_vorschriftszeichen", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Blaues Vorschriftszeichen");
+								Detection.kreisErkannt = false;
+					    }
+					});
+				}
+				
+				if(Detection.viereckErkannt == true){
+					
+					runOnUiThread(new Runnable() {
+					     public void run() {
+
+					    	 int kreis = getResources().getIdentifier(getPackageName() + ":drawable/blaues_richtzeichen", null, null);
+								verkehrszeichenBild.setImageResource(kreis);
+								verkehrszeichenName.setText("Blaues Richtzeichen");
+								Detection.viereckErkannt = false;
+					    }
+					});
+				}
+				
+				break;
+
+			}
+			
 			break;
 		/*
 		case VIEW_MODE_CIRCLE:
